@@ -1,0 +1,25 @@
+Đối tượng là gì:
+- Là những gìu chúng ta  cầm được sờ được ấy ấy được...
+VD Crush, nyc, cái bàn cái ghế...
+-Lập trình hướng đối tượng là 1 kỹ thuật lập trình 
+- Nó sử dụng được hầy hết trong các ngôn ngữ lập trình
+- Chia bài toán ra thành một đối tượng cụ thể để giải quyết
+Ưu điểm:
+
+- Giúp tổ chức mã nguồn hiệu quả hơn
+- Các đối tượng có thể xây dựng độc lập giups module hoá mã nguồn, có thể sử dụng các đối tượng ở nhiều nơi khác nhau
+- Thuận lợi cho việc tái sử dụng code
+- Tăng tính đồng nhất
+Oop có 4 tính chất cơ bản:
+- Đóng gói
+- Kế thừa
+- Đa hình 
+- Trừu tượng
+
+Class: Là Khuôn mẫu dùng để tạo ra nhiều đối tượng.
+Obj: Có cùng đặc điểm, tính chất, hành động
+Obj là những đối tượng được tạo ra của class, mac những phương thức, đặc điểm của class đó
+        +Đặc điểm:  Những thành phần góp phần cấu tạo, hình thành lên đối tượng (Thuộc tính => Biến, trong class)
+        +Hành động: Là những công việc mà đối tượng có thể thưc hiện được
+            (Phương thức => Hàm trong class)
+Lưu ý: 1  class có thể tạo được nhiều đối tượng, còn 1 đối tượng chỉ thuộc 1 class.
