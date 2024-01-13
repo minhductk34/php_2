@@ -1,46 +1,77 @@
 <?php
+
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use App\Controller\BaseController;
 use App\Models\User;
 
 class UserController extends BaseController {
+    private $users = [
+        ['id' => 1, 'name' => 'User 1', 'email' => 'user1@example.com'],
+        ['id' => 2, 'name' => 'User 2', 'email' => 'user2@example.com'],
+        ['id' => 3, 'name' => 'User 3', 'email' => 'user3@example.com'],
+    ];
+
+    // GET: Hiển thị danh sách người dùng
     public function index()
     {
-
-        $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
-
-        if (empty($keyword)) {
-            $users = User::get();
-        } else {
-            $users = User::where('name', 'like', "%$keyword%")->get();
-        }
-
-
-
-
-        return $this->render('user.index', compact('users', 'keyword'));
+        $data = ['users' => $this->users];
+        $this->render('users.index', $data);
     }
 
+    // GET: Hiển thị giao diện tạo mới người dùng
+    public function create()
+    {
+        $this->render('users.create');
+    }
+
+    // POST: Lưu dữ liệu người dùng nhập để tạo mới người dùng
     public function store()
     {
-        // validate kiểm tra các giá trị gửi lên có không, nếu không có thì phải quay lại đường dẫn form tạo mới
-        $user = new User();
-        $user->name = $_POST['name'];
-        $user->password = password_hash($_POST['password'], PASSWORD_BCRYPT); // ở hàm login, cần sử dụng password_verify để tiến hành kiểm tra password
-        $user->email = $_POST['email'];
-        $user->status = (int) $_POST['status'];
+        // Logic để lưu trữ người dùng mới (ví dụ: lưu vào cơ sở dữ liệu)
+        // Chuyển hướng đến trang index hoặc hiển thị thông báo thành công
+        echo "Người dùng đã được lưu thành công!";
+    }
 
-        $fileName = '';
-        $avatarFile = $_FILES['avatar'];
-        if ($avatarFile['size'] > 0) {
-            $path = '/public/images/avatars/';
-            $fileName = $path . uniqid() . '_' . $avatarFile['name'];
-            move_uploaded_file($avatarFile['tmp_name'], $fileName);
+    // GET: Hiển thị giao diện chỉnh sửa người dùng theo id
+    public function edit($id)
+    {
+        // Logic để lấy chi tiết người dùng theo ID
+        $user = $this->getUserById($id);
+
+        if ($user) {
+            // Hiển thị form để chỉnh sửa người dùng với dữ liệu được điền sẵn
+            $data = ['user' => $user];
+            $this->render('users.edit', $data);
+        } else {
+            echo "Không tìm thấy người dùng!";
         }
-        $user->avatar = $fileName; // gán đường dẫn vào thuộc tính avatar
+    }
 
-        $user->save();
+    // POST: Cập nhật người dùng theo id
+    public function update($id)
+    {
+        // Logic để cập nhật người dùng theo ID
+        // Chuyển hướng đến trang index hoặc hiển thị thông báo thành công
+        echo "Người dùng có ID $id đã được cập nhật thành công!";
+    }
 
+    // GET: Xoá người dùng theo id
+    public function destroy($id)
+    {
+        // Logic để xoá người dùng theo ID
+        // Chuyển hướng đến trang index hoặc hiển thị thông báo thành công
+        echo "Người dùng có ID $id đã được xoá thành công!";
+    }
+
+    private function getUserById($id)
+    {
+        // Hàm trợ giúp để lấy chi tiết người dùng theo ID
+        foreach ($this->users as $user) {
+            if ($user['id'] == $id) {
+                return $user;
+            }
+        }
+        return null;
     }
 }

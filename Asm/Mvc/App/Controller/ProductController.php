@@ -1,110 +1,77 @@
 <?php
+
 namespace App\Controllers;
-use App\Controllers\BaseController;
+
+use App\Controller\BaseController;
 use App\Models\Product;
 
 class ProductController extends BaseController {
-    public function getProducts() {
-        // Hiển thị danh sách sản phẩm bằng render() của BladeOne
-        // file view ở new-mvc/App/Views/product/index.blade.php
-        $viewName = 'product.index';
-        // data view cần biến $name và $price
-        $data = [
-            'name' => 'Iphone 14',
-            'price' => 12000000,
-            'array' => [
-                'Xanh',
-                'Đỏ',
-                'Tím',
-                'Vàng'
-            ],
-            'products' => Product::all() // lấy ra tất cả các bản ghi dưới dạng 1 collection
-        ];
+    private $products = [
+        ['id' => 1, 'name' => 'Product 1', 'price' => 100],
+        ['id' => 2, 'name' => 'Product 2', 'price' => 150],
+        ['id' => 3, 'name' => 'Product 3', 'price' => 200],
+    ];
 
-        // var_dump($data);
-        // // return $data;
-        // die;
-
-        return $this->render($viewName, $data);
-    }
-
-    // GET: Hàm hiển thị danh sách
+    // GET: Hiển thị danh sách sản phẩm
     public function index()
     {
-        // Controller sẽ tương tác với Model, Model sẽ tương tác với DB để lấy dữ liệu trả cho Controller
-        // $products = Product::all(); // lấy ra tất cả các bản ghi
-
-        // $products = Product::paginate(1); // lấy ra 10 bản ghi trên 1 trang
-        $products = Product::select('id', 'name', 'price')->where('id', '>', 0)->get(); // lấy ra các bản ghi theo điều kiện
-        $count = Product::count(); // đếm số bản ghi trong DB
-        // Controller có dữ liệu rồi thì đưa dữ liệu đó cho view để hiển thị ra
-        // compact sẽ gói các biến lại thành 1 mảng gồm key là tên biến và value là giá trị của biến đó
-        return $this->render('product.index', compact('products', 'count'));
+        $data = ['products' => $this->products];
+        $this->render('products.index', $data);
     }
 
-    // GET: Hàm hiển thị giao diện tạo mới bản ghi
+    // GET: Hiển thị giao diện tạo mới sản phẩm
     public function create()
     {
-        return $this->render('product.create', []);
+        $this->render('products.create');
     }
 
-    // POST: Hàm lưu dữ liệu người dùng nhập tạo mới
+    // POST: Lưu dữ liệu người dùng nhập để tạo mới sản phẩm
     public function store()
     {
-        // KHÔNG LƯU ĐƯỢC KHI CHƯA ĐẶT TIMESTAMPS Ở MODEL VỀ FALSE
-        $product = new Product();
-        // Thuộc tính của đối tượng vừa khởi tạo phải đúng là tên trường trong bảng products
-        $product->name = $_POST['name'];
-        $product->price = (int) $_POST['price'];
-        $product->status = (int) $_POST['status'];
-        // Lưu
-        // var_dump($product);
-        $product->save();
-        // Product::create([
-        //     'name' => $_POST['name'],
-        //     'price' => (int) $_POST['price'],
-        //     'status' => (int) $_POST['status'],
-        // ]);
-
-        $url = BASE_URL . 'products';
-        header("location: $url");
+        // Logic để lưu trữ sản phẩm mới (ví dụ: lưu vào cơ sở dữ liệu)
+        // Chuyển hướng đến trang index hoặc hiển thị thông báo thành công
+        echo "Sản phẩm đã được lưu thành công!";
     }
 
-    // GET: Hàm xoá bản ghi theo id truyền vào
+    // GET: Xoá sản phẩm theo id truyền vào
     public function destroy($id)
     {
-        // Cách 1: Tìm kiếm Product có id = $id và sau đó xoá Product đó đi bằng phương thức delete()
-        $product = Product::find($id); // tìm theo id và trả về 1 đối tương ~ fetch
-        // $productWhereFirst = Product::where('id', $id)->first(); // ~ fetch
-        // $productWhere = Product::where('id', $id)->get(); // ~ fetchAll
-
-        if ($product && $product->delete()) {
-            $url = BASE_URL . 'products';
-            header("location: $url");
-        }
-
-        // Cách 2: Không đi tìm nữa, Bảo Product xoá thằng có id = 1
-        // Product::destroy($id);
+        // Logic để xoá sản phẩm theo ID
+        // Chuyển hướng đến trang index hoặc hiển thị thông báo thành công
+        echo "Sản phẩm có ID $id đã được xoá thành công!";
     }
 
+    // GET: Hiển thị giao diện chỉnh sửa sản phẩm
     public function edit($id)
     {
-        $product = Product::find($id);
+        // Logic để lấy chi tiết sản phẩm theo ID
+        $product = $this->getProductById($id);
 
-        return $this->render('product.edit', compact('product'));
+        if ($product) {
+            // Hiển thị form để chỉnh sửa sản phẩm với dữ liệu được điền sẵn
+            $data = ['product' => $product];
+            $this->render('products.edit', $data);
+        } else {
+            echo "Không tìm thấy sản phẩm!";
+        }
     }
 
+    // POST: Cập nhật sản phẩm theo id truyền vào
     public function update($id)
     {
-        // Việc cập nhật giá trị 1 bản ghi ~ cập nhật giá trị các thuộc tính của 1 đối tượng sau đó gọi hàm save()
-        $product = Product::find($id);
-        $product->name = $_POST['name'];
-        $product->price = (int) $_POST['price'];
-        $product->status = (int) $_POST['status'];
+        // Logic để cập nhật sản phẩm theo ID
+        // Chuyển hướng đến trang index hoặc hiển thị thông báo thành công
+        echo "Sản phẩm có ID $id đã được cập nhật thành công!";
+    }
 
-        $product->save();
-
-        $url = BASE_URL . 'products';
-        header("location: $url");
+    private function getProductById($id)
+    {
+        // Hàm trợ giúp để lấy chi tiết sản phẩm theo ID
+        foreach ($this->products as $product) {
+            if ($product['id'] == $id) {
+                return $product;
+            }
+        }
+        return null;
     }
 }

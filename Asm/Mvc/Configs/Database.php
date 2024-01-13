@@ -1,26 +1,20 @@
-<?php 
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Container\Container;
+<?php
+namespace App\Configs;
+class DatabaseConnection
+{
+    private static $pdo;
 
-$capsule = new Capsule;
+    public static function getConnection()
+    {
+        if (!isset(self::$pdo)) {
+            try {
+                self::$pdo = new \PDO('mysql:host=localhost;dbname=duanmot', 'root', '');
+                self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            } catch (\PDOException $e) {
+                die("Kết nối đến cơ sở dữ liệu thất bại: " . $e->getMessage());
+            }
+        }
 
-$capsule->addConnection([
-    'driver'    => 'mysql',
-    'host'      => '127.0.0.1',
-    'database'  => 'duanmot',
-    'username'  => 'root',
-    'password'  => '',
-    'charset'   => 'utf8',
-    'collation' => 'utf8_unicode_ci',
-    'prefix'    => '',
-]);
-// Set the event dispatcher used by Eloquent models... (optional)
-
-$capsule->setEventDispatcher(new Dispatcher(new Container));
-
-// Make this Capsule instance available globally via static methods... (optional)
-$capsule->setAsGlobal();
-
-// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
-$capsule->bootEloquent();
+        return self::$pdo;
+    }
+}
